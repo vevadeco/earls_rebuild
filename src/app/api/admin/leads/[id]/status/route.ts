@@ -17,7 +17,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   const { id } = await ctx.params;
   const url = new URL(req.url);
   const status = (url.searchParams.get("status") || "").trim();
-  const allowed = new Set(["new", "contacted", "won", "lost"]);
+  const allowed = new Set(["new", "contacted", "qualified", "converted", "won", "lost"]);
   if (!allowed.has(status)) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }

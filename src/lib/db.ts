@@ -25,8 +25,32 @@ async function ensureSchema() {
     );
   `;
 
+  await sql`
+    CREATE TABLE IF NOT EXISTS pageviews (
+      id TEXT PRIMARY KEY,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+      session_id TEXT NOT NULL,
+      page TEXT,
+      referrer TEXT
+    );
+  `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS promo_settings (
+      id INTEGER PRIMARY KEY,
+      enabled BOOLEAN NOT NULL DEFAULT TRUE,
+      title TEXT,
+      subtitle TEXT,
+      discount_text TEXT,
+      cta_text TEXT,
+      deadline_date DATE
+    );
+  `;
+
   await sql`CREATE INDEX IF NOT EXISTS leads_created_at_idx ON leads(created_at DESC);`;
   await sql`CREATE INDEX IF NOT EXISTS leads_status_idx ON leads(status);`;
+  await sql`CREATE INDEX IF NOT EXISTS pageviews_created_at_idx ON pageviews(created_at DESC);`;
+  await sql`CREATE INDEX IF NOT EXISTS pageviews_session_id_idx ON pageviews(session_id);`;
 }
 
 export async function dbReady() {
@@ -46,5 +70,15 @@ export type LeadRow = {
   message: string | null;
   status: string;
   source: string | null;
+};
+
+export type PromoSettingsRow = {
+  id: number;
+  enabled: boolean;
+  title: string | null;
+  subtitle: string | null;
+  discount_text: string | null;
+  cta_text: string | null;
+  deadline_date: string | null;
 };
 
