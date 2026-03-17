@@ -17,12 +17,3 @@ Set these in Vercel (Project → Settings → Environment Variables):
 - `ADMIN_PASSWORD`
 - `NEXTAUTH_SECRET` (used as the session signing secret; any long random string)
 
-## Local development
-
-```bash
-npm install
-npm run dev
-```
-
-Open `http://localhost:3000`.
-
