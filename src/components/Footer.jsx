@@ -44,12 +44,12 @@ const Footer = () => {
             </p>
             <div className="space-y-3">
               <a
-                href="tel:+19051234567"
+                href="tel:+19059792655"
                 className="flex items-center gap-3 text-primary-foreground/80 hover:text-secondary transition-colors"
                 data-testid="footer-phone"
               >
                 <Phone className="w-4 h-4" />
-                <span className="font-body text-sm">(905) 123-4567</span>
+                <span className="font-body text-sm">(905) 979-2655</span>
               </a>
               <a
                 href="mailto:info@earlslandscaping.ca"

@@ -200,7 +200,7 @@ const HeroSection = () => {
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder="(905) 123-4567"
+                        placeholder="(905) 979-2655"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         className="mt-1.5 font-body"
