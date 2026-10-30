@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Star, Shield, Clock } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import { trackMeta } from "@/lib/metaPixel";
 
 const API = "/api";
 
@@ -48,6 +49,7 @@ const HeroSection = () => {
     try {
       const response = await axios.post(`${API}/leads`, formData);
       if (response.data.success) {
+        trackMeta("Lead");
         setIsSubmitted(true);
         toast.success(response.data.message);
         setFormData({ name: "", email: "", phone: "", service_type: "" });
