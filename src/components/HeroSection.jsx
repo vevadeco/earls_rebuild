@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Star, Shield, Clock } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import { trackMeta } from "@/lib/metaPixel";
 
 const API = "/api";
 
@@ -48,6 +50,7 @@ const HeroSection = () => {
     try {
       const response = await axios.post(`${API}/leads`, formData);
       if (response.data.success) {
+        trackMeta("Lead");
         setIsSubmitted(true);
         toast.success(response.data.message);
         setFormData({ name: "", email: "", phone: "", service_type: "" });
@@ -244,7 +247,14 @@ const HeroSection = () => {
                     </Button>
 
                     <p className="text-center text-xs text-muted-foreground font-body">
-                      No spam. We respect your privacy.
+                      By submitting you agree to our{" "}
+                      <Link
+                        href="/privacy-policy"
+                        className="underline underline-offset-2 hover:text-foreground"
+                      >
+                        Privacy Policy
+                      </Link>
+                      .
                     </p>
                   </form>
                 )}

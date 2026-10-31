@@ -16,4 +16,7 @@ Set these in Vercel (Project → Settings → Environment Variables):
 - `ADMIN_USERNAME`
 - `ADMIN_PASSWORD`
 - `NEXTAUTH_SECRET` (used as the session signing secret; any long random string)
+- `RESEND_API_KEY` (sends a notification after each new lead; if unset, the lead is still saved and the email is skipped)
+- `LEAD_NOTIFY_FROM` (optional sender; defaults to `Earl's Landscaping <leads@earlslandscaping.ca>`. The domain must be verified in Resend)
+- `LEAD_NOTIFY_TO` (optional comma-separated recipients; defaults to `cbixby.inv@gmail.com,sales@vevade.com`)
 

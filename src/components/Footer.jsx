@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Leaf, Phone, Mail, MapPin } from "lucide-react";
 
 const Footer = () => {
@@ -73,7 +74,7 @@ const Footer = () => {
               {services.map((service) => (
                 <li key={service}>
                   <a
-                    href="#services"
+                    href="/#services"
                     className="font-body text-sm text-primary-foreground/80 hover:text-secondary transition-colors"
                   >
                     {service}
@@ -90,7 +91,7 @@ const Footer = () => {
               {serviceAreas.map((area) => (
                 <li key={area}>
                   <a
-                    href="#service-area"
+                    href="/#service-area"
                     className="font-body text-sm text-primary-foreground/80 hover:text-secondary transition-colors"
                   >
                     {area}
@@ -134,12 +135,12 @@ const Footer = () => {
               © {currentYear} Earl's Landscaping. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <a
-                href="#"
+              <Link
+                href="/privacy-policy"
                 className="font-body text-sm text-primary-foreground/60 hover:text-secondary transition-colors"
               >
                 Privacy Policy
-              </a>
+              </Link>
               <a
                 href="#"
                 className="font-body text-sm text-primary-foreground/60 hover:text-secondary transition-colors"

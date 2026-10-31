@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { sql } from "@vercel/postgres";
 import { dbReady, isDbConfigured } from "@/lib/db";
+import { notifyNewLead } from "@/lib/leadNotification";
 
 const LeadCreateSchema = z.object({
   name: z.string().trim().min(1),
@@ -33,6 +34,7 @@ export async function POST(req: Request) {
   await dbReady();
 
   const id = crypto.randomUUID();
+  const submittedAt = new Date();
   const { name, email, phone, service_type, message, source } = parsed.data;
 
   await sql`
@@ -48,6 +50,18 @@ export async function POST(req: Request) {
       ${source ?? "website"}
     )
   `;
+
+  after(() =>
+    notifyNewLead({
+      id,
+      name,
+      email,
+      phone,
+      serviceType: service_type,
+      message,
+      submittedAt
+    })
+  );
 
   return NextResponse.json({ success: true, message: "Lead created", id }, { status: 201 });
 }
