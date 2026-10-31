@@ -20,10 +20,44 @@ const bodyFont = Outfit({
   variable: "--font-body"
 });
 
+const siteTitle = "Earl's Landscaping | Professional Landscaping Services";
+const siteDescription =
+  "Professional landscaping services for residential and commercial properties";
+const siteUrl = "https://www.earlslandscaping.ca";
+const ogImageUrl = `${siteUrl}/og-snow-removal.jpg`;
+const ogImageAlt = "A plow truck and snow blower clearing a suburban driveway at dawn";
+
 export const metadata: Metadata = {
-  title: "Earl's Landscaping | Professional Landscaping Services",
-  description:
-    "Professional landscaping services for residential and commercial properties"
+  metadataBase: new URL(siteUrl),
+  title: siteTitle,
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    title: siteTitle,
+    description: siteDescription,
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: ogImageAlt
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: ogImageAlt
+      }
+    ]
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
