@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -246,7 +247,14 @@ const HeroSection = () => {
                     </Button>
 
                     <p className="text-center text-xs text-muted-foreground font-body">
-                      No spam. We respect your privacy.
+                      By submitting you agree to our{" "}
+                      <Link
+                        href="/privacy-policy"
+                        className="underline underline-offset-2 hover:text-foreground"
+                      >
+                        Privacy Policy
+                      </Link>
+                      .
                     </p>
                   </form>
                 )}
