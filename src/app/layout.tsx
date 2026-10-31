@@ -2,6 +2,7 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 import { DM_Serif_Display, Outfit } from "next/font/google";
+import { MetaPixel } from "@/components/MetaPixel";
 import { Providers } from "./providers";
 
 const headingFont = DM_Serif_Display({
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${headingFont.variable} ${bodyFont.variable}`}>
       <body>
+        <MetaPixel />
         {children}
         <Providers />
       </body>

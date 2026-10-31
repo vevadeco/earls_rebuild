@@ -48,6 +48,9 @@ const HeroSection = () => {
     try {
       const response = await axios.post(`${API}/leads`, formData);
       if (response.data.success) {
+        if (typeof window.fbq === "function") {
+          window.fbq("track", "Lead");
+        }
         setIsSubmitted(true);
         toast.success(response.data.message);
         setFormData({ name: "", email: "", phone: "", service_type: "" });
