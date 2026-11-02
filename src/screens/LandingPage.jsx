@@ -12,11 +12,10 @@ import axios from "axios";
 
 const API = "/api";
 
-const LandingPage = () => {
+const LandingPage = ({ snowContractSeason = false }) => {
   const [showPromo, setShowPromo] = useState(false);
   const [promoSettings, setPromoSettings] = useState(null);
 
-  // Fetch promo settings and track page view on mount
   useEffect(() => {
     const fetchPromoSettings = async () => {
       try {
@@ -58,21 +57,25 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background noise-bg" data-testid="landing-page">
+    <div
+      className="min-h-screen bg-background noise-bg"
+      data-testid="landing-page"
+      data-snow-season={snowContractSeason ? "on" : "off"}
+    >
       {showPromo && promoSettings && (
         <PromoBanner 
           settings={promoSettings} 
           onClose={() => setShowPromo(false)} 
         />
       )}
-      <Navbar onGetQuote={scrollToForm} hasPromo={showPromo} />
+      <Navbar onGetQuote={scrollToForm} hasPromo={showPromo} snowSeason={snowContractSeason} />
       <main>
-        <HeroSection />
-        <ServicesSection onGetQuote={scrollToForm} />
+        <HeroSection snowSeason={snowContractSeason} />
+        <ServicesSection onGetQuote={scrollToForm} snowSeason={snowContractSeason} />
         <TestimonialsSection />
-        <ServiceAreaSection onGetQuote={scrollToForm} />
+        <ServiceAreaSection onGetQuote={scrollToForm} snowSeason={snowContractSeason} />
       </main>
-      <Footer />
+      <Footer snowSeason={snowContractSeason} />
     </div>
   );
 };

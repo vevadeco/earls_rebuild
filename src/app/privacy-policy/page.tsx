@@ -1,30 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Leaf } from "lucide-react";
 
+import BrandLockup from "@/components/BrandLockup";
 import Footer from "@/components/Footer";
+import { BUSINESS_NAME } from "@/lib/brand";
+import { getSnowContractSeason } from "@/lib/siteSettings";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Earl's Landscaping",
+  title: `Privacy Policy | ${BUSINESS_NAME}`,
   description:
-    "How Earl's Landscaping in Ontario collects, uses, and protects personal information from quote requests, email notifications, and website measurement."
+    "How Earl's Landscaping and Snow Removal in Ontario collects, uses, and protects personal information from quote requests, email notifications, and website measurement."
 };
 
 const linkClass = "text-primary underline underline-offset-2 hover:text-primary/80";
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  const snowContractSeason = await getSnowContractSeason();
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-white/95 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heading text-xl text-foreground leading-tight">Earl&apos;s</span>
-              <span className="text-xs text-muted-foreground font-body tracking-wide">LANDSCAPING</span>
-            </div>
+          <Link href="/" className="flex items-center gap-2" aria-label={BUSINESS_NAME}>
+            <BrandLockup snowSeason={snowContractSeason} />
           </Link>
           <Link
             href="/#hero"
@@ -36,11 +33,11 @@ export default function PrivacyPolicyPage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <p className="font-body text-sm text-muted-foreground mb-3">Effective October 30, 2026</p>
+        <p className="font-body text-sm text-muted-foreground mb-3">Effective November 1, 2026</p>
         <h1 className="font-heading text-4xl sm:text-5xl text-foreground mb-4">Privacy Policy</h1>
         <p className="font-body text-lg text-muted-foreground leading-relaxed mb-12">
-          This policy explains what Earl&apos;s Landscaping collects on this website, why we collect it, and the
-          choices you have. We are a landscaping business in Hamilton, Ontario, Canada.
+          This policy explains what Earl&apos;s Landscaping and Snow Removal collects on this website, why we collect
+          it, and the choices you have. We are a landscaping and snow removal business in Hamilton, Ontario, Canada.
         </p>
 
         <div className="space-y-10 font-body text-foreground/90 leading-relaxed">
@@ -49,7 +46,7 @@ export default function PrivacyPolicyPage() {
             <p>
               When you request a quote, we collect your name, email address, phone number, and the service you ask
               about. If a message is included with the request, we store that too. We use this information to respond
-              to your quote and to contact you about the landscaping services you inquired about.
+              to your quote and to contact you about the landscaping or snow removal services you inquired about.
             </p>
           </section>
 
@@ -57,7 +54,7 @@ export default function PrivacyPolicyPage() {
             <h2 className="font-heading text-2xl text-foreground mb-3">Where quote requests are stored</h2>
             <p>
               This website is hosted on Vercel. Quote requests are saved in a database connected to that hosting. A
-              limited number of people at Earl&apos;s Landscaping can view those records in a private admin area so we
+              limited number of people at Earl&apos;s Landscaping and Snow Removal can view those records in a private admin area so we
               can follow up.
             </p>
           </section>
@@ -214,7 +211,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="font-heading text-2xl text-foreground mb-3">Contact</h2>
             <p>
-              Earl&apos;s Landscaping
+              Earl&apos;s Landscaping and Snow Removal
               <br />
               Hamilton, Ontario, Canada
               <br />
@@ -230,7 +227,7 @@ export default function PrivacyPolicyPage() {
         </div>
       </main>
 
-      <Footer />
+      <Footer snowSeason={snowContractSeason} />
     </div>
   );
 }

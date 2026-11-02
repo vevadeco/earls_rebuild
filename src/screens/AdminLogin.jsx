@@ -54,7 +54,7 @@ const AdminLogin = () => {
             Admin Login
           </CardTitle>
           <p className="font-body text-muted-foreground text-sm mt-2">
-            Earl's Landscaping Dashboard
+            Earl&apos;s Landscaping and Snow Removal
           </p>
         </CardHeader>
         <CardContent className="pt-6">

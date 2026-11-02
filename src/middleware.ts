@@ -12,6 +12,9 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-pathname", pathname);
+
   // Admin auth guard
   if (pathname.startsWith("/admin/leads")) {
     const token = req.cookies.get("earls_admin")?.value;
@@ -22,7 +25,9 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  return NextResponse.next({
+    request: { headers: requestHeaders }
+  });
 }
 
 export const config = {

@@ -1,16 +1,27 @@
 import Link from "next/link";
-import { Leaf, Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
+import BrandLockup from "@/components/BrandLockup";
+import { BUSINESS_NAME } from "@/lib/brand";
 
-const Footer = () => {
+const Footer = ({ snowSeason = false }) => {
   const currentYear = new Date().getFullYear();
 
-  const services = [
-    "Lawn Care & Maintenance",
-    "Garden Planting",
-    "Hardscaping",
-    "Seasonal Cleanup",
-    "Snow Removal",
-  ];
+  const services = snowSeason
+    ? [
+        "Snow Removal",
+        "Seasonal Snow Contracts",
+        "Lawn Care & Maintenance",
+        "Garden Planting",
+        "Hardscaping",
+        "Seasonal Cleanup",
+      ]
+    : [
+        "Lawn Care & Maintenance",
+        "Garden Planting",
+        "Hardscaping",
+        "Seasonal Cleanup",
+        "Snow Removal",
+      ];
 
   const serviceAreas = [
     "Hamilton",
@@ -28,20 +39,13 @@ const Footer = () => {
         <div className="py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Company Info */}
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-primary" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-heading text-xl leading-tight">Earl's</span>
-                <span className="text-xs text-primary-foreground/80 font-body tracking-wide">
-                  LANDSCAPING
-                </span>
-              </div>
+            <div className="mb-6">
+              <BrandLockup variant="onDark" snowSeason={snowSeason} />
             </div>
             <p className="font-body text-primary-foreground/80 text-sm leading-relaxed mb-6">
-              Hamilton's trusted landscaping experts. Transforming outdoor spaces 
-              with quality craftsmanship since 2009.
+              {snowSeason
+                ? "Seasonal snow contracts and driveway clearing across Hamilton and the GTA, with landscaping when the ground thaws."
+                : "Hamilton's trusted landscaping experts. Transforming outdoor spaces with quality craftsmanship since 2009."}
             </p>
             <div className="space-y-3">
               <a
@@ -120,9 +124,13 @@ const Footer = () => {
             </div>
             <div className="mt-6 p-4 bg-secondary/20 rounded-lg">
               <p className="font-body text-sm">
-                <span className="font-semibold text-secondary">Emergency Services</span>
+                <span className="font-semibold text-secondary">
+                  {snowSeason ? "Storm Response" : "Emergency Services"}
+                </span>
                 <br />
-                Available 24/7 for urgent needs
+                {snowSeason
+                  ? "Call when the snow starts coming down"
+                  : "Available 24/7 for urgent needs"}
               </p>
             </div>
           </div>
@@ -132,7 +140,7 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/10 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="font-body text-sm text-primary-foreground/60">
-              © {currentYear} Earl's Landscaping. All rights reserved.
+              © {currentYear} {BUSINESS_NAME}. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
               <Link

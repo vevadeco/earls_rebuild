@@ -17,25 +17,21 @@ import { CheckCircle, Star, Shield, Clock } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import { trackMeta } from "@/lib/metaPixel";
+import { orderedServices } from "@/lib/services";
 
 const API = "/api";
 
-const HeroSection = () => {
+const HeroSection = ({ snowSeason = false }) => {
+  const services = orderedServices(snowSeason);
+  const defaultService = snowSeason ? "snow-removal" : "";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    service_type: "",
+    service_type: defaultService,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const services = [
-    { value: "lawn-care", label: "Lawn Care & Maintenance" },
-    { value: "garden-planting", label: "Garden Planting" },
-    { value: "hardscaping", label: "Hardscaping (Patios, Walkways)" },
-    { value: "full-service", label: "Full Landscaping Service" },
-  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +49,7 @@ const HeroSection = () => {
         trackMeta("Lead");
         setIsSubmitted(true);
         toast.success(response.data.message);
-        setFormData({ name: "", email: "", phone: "", service_type: "" });
+        setFormData({ name: "", email: "", phone: "", service_type: defaultService });
       }
     } catch (error) {
       console.error("Error submitting lead:", error);
@@ -63,11 +59,28 @@ const HeroSection = () => {
     }
   };
 
-  const trustBadges = [
-    { icon: Star, text: "4.8 Star Rating" },
-    { icon: Shield, text: "Fully Insured" },
-    { icon: Clock, text: "Same Week Service" },
-  ];
+  const trustBadges = snowSeason
+    ? [
+        { icon: Star, text: "4.8 Star Rating" },
+        { icon: Shield, text: "Fully Insured" },
+        { icon: Clock, text: "Storm-Ready Crew" },
+      ]
+    : [
+        { icon: Star, text: "4.8 Star Rating" },
+        { icon: Shield, text: "Fully Insured" },
+        { icon: Clock, text: "Same Week Service" },
+      ];
+  const highlights = snowSeason
+    ? [
+        "Seasonal snow contracts",
+        "Driveways, walkways, and lots",
+        "Licensed & insured professionals",
+      ]
+    : [
+        "Free consultation & detailed quotes",
+        "Licensed & insured professionals",
+        "Satisfaction guaranteed",
+      ];
 
   return (
     <section
@@ -79,7 +92,9 @@ const HeroSection = () => {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&q=80&w=2000')`,
+          backgroundImage: snowSeason
+            ? `url('https://images.unsplash.com/photo-1457269449834-928af64c684d?auto=format&fit=crop&q=80&w=2000')`
+            : `url('https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&q=80&w=2000')`,
         }}
       >
         <div className="hero-overlay absolute inset-0" />
@@ -90,13 +105,24 @@ const HeroSection = () => {
           {/* Left Content */}
           <div className="text-white animate-fade-in-up">
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              Transform Your
-              <br />
-              <span className="text-secondary">Outdoor Space</span>
+              {snowSeason ? (
+                <>
+                  Snow Removal
+                  <br />
+                  <span className="text-secondary">& Seasonal Contracts</span>
+                </>
+              ) : (
+                <>
+                  Transform Your
+                  <br />
+                  <span className="text-secondary">Outdoor Space</span>
+                </>
+              )}
             </h1>
             <p className="font-body text-lg sm:text-xl text-white/90 mb-8 max-w-lg leading-relaxed">
-              Hamilton's trusted landscaping experts. From lush lawns to stunning hardscapes, 
-              we bring your outdoor vision to life with over 15 years of experience.
+              {snowSeason
+                ? "Hamilton's crew for driveway and walkway clearing, commercial lots, and seasonal snow contracts. We're ready before the first storm."
+                : "Hamilton's trusted landscaping experts. From lush lawns to stunning hardscapes, we bring your outdoor vision to life with over 15 years of experience."}
             </p>
 
             {/* Trust Badges */}
@@ -115,11 +141,7 @@ const HeroSection = () => {
 
             {/* Features List */}
             <div className="space-y-3">
-              {[
-                "Free consultation & detailed quotes",
-                "Licensed & insured professionals",
-                "Satisfaction guaranteed",
-              ].map((feature, index) => (
+              {highlights.map((feature, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-3 opacity-0 animate-fade-in-up"
@@ -137,7 +159,7 @@ const HeroSection = () => {
             <Card className="bg-card shadow-2xl border-0 rounded-2xl overflow-hidden" data-testid="lead-form-card">
               <CardHeader className="bg-primary text-primary-foreground p-6">
                 <CardTitle className="font-heading text-2xl text-center">
-                  Get Your Free Quote
+                  {snowSeason ? "Get a Snow Contract Quote" : "Get Your Free Quote"}
                 </CardTitle>
                 <p className="text-center text-primary-foreground/80 font-body text-sm mt-2">
                   We'll respond within 24 hours
@@ -243,7 +265,11 @@ const HeroSection = () => {
                       disabled={isSubmitting}
                       data-testid="submit-form-btn"
                     >
-                      {isSubmitting ? "Submitting..." : "Get My Free Quote"}
+                      {isSubmitting
+                        ? "Submitting..."
+                        : snowSeason
+                          ? "Get My Snow Contract Quote"
+                          : "Get My Free Quote"}
                     </Button>
 
                     <p className="text-center text-xs text-muted-foreground font-body">

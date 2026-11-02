@@ -140,3 +140,67 @@ html {
   scroll-behavior: smooth;
 }
 
+
+/* Winter palette for Snow Contract Season. Applied on <html> for public pages only. */
+.snow-season {
+  --background: 210 33% 97%;
+  --foreground: 215 32% 14%;
+  --card: 0 0% 100%;
+  --card-foreground: 215 32% 14%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 32% 14%;
+  --primary: 213 46% 18%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 198 52% 82%;
+  --secondary-foreground: 213 46% 16%;
+  --muted: 210 24% 92%;
+  --muted-foreground: 215 14% 38%;
+  --accent: 199 82% 34%;
+  --accent-foreground: 0 0% 100%;
+  --border: 214 22% 82%;
+  --input: 214 22% 82%;
+  --ring: 213 46% 18%;
+}
+
+.snow-season .hero-overlay {
+  background: linear-gradient(
+    to right,
+    rgba(10, 28, 48, 0.9) 0%,
+    rgba(10, 28, 48, 0.62) 52%,
+    rgba(10, 28, 48, 0.28) 100%
+  );
+}
+
+.snow-effect {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+}
+
+.snowflake {
+  position: absolute;
+  top: -12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 8px rgba(190, 216, 234, 0.9);
+  animation-name: snowfall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translate3d(0, -8vh, 0);
+  }
+  100% {
+    transform: translate3d(var(--snow-drift, 14px), 108vh, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snow-effect {
+    display: none;
+  }
+}

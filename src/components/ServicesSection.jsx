@@ -1,42 +1,60 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Leaf, Flower2, HardHat } from "lucide-react";
+import { ArrowRight, Leaf, Flower2, HardHat, Snowflake } from "lucide-react";
 
-const ServicesSection = ({ onGetQuote }) => {
-  const services = [
-    {
-      id: "lawn-care",
-      title: "Lawn Care & Maintenance",
-      description:
-        "Keep your lawn looking pristine year-round with our comprehensive care program. Mowing, fertilization, aeration, and seasonal treatments.",
-      icon: Leaf,
-      image: "https://images.pexels.com/photos/4920283/pexels-photo-4920283.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-      features: ["Weekly Mowing", "Fertilization", "Weed Control", "Seasonal Cleanup"],
-      span: "md:col-span-2 md:row-span-2",
-      large: true,
-    },
-    {
-      id: "garden-planting",
-      title: "Garden Planting",
-      description:
-        "Beautiful flower beds and garden designs that bloom throughout the seasons.",
-      icon: Flower2,
-      image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&q=80&w=800",
-      features: ["Flower Beds", "Shrubs & Trees", "Seasonal Plants"],
-      span: "md:col-span-1",
-      large: false,
-    },
-    {
-      id: "hardscaping",
-      title: "Hardscaping & Patios",
-      description:
-        "Transform your outdoor space with stunning patios, walkways, and retaining walls.",
-      icon: HardHat,
-      image: "https://images.pexels.com/photos/6313939/pexels-photo-6313939.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-      features: ["Patios", "Walkways", "Retaining Walls"],
-      span: "md:col-span-1",
-      large: false,
-    },
-  ];
+const ServicesSection = ({ onGetQuote, snowSeason = false }) => {
+  const lawn = {
+    id: "lawn-care",
+    title: "Lawn Care & Maintenance",
+    description:
+      "Keep your lawn looking pristine year-round with our comprehensive care program. Mowing, fertilization, aeration, and seasonal treatments.",
+    icon: Leaf,
+    image: "https://images.pexels.com/photos/4920283/pexels-photo-4920283.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    features: ["Weekly Mowing", "Fertilization", "Weed Control", "Seasonal Cleanup"],
+    span: "md:col-span-2 md:row-span-2",
+    large: true,
+  };
+  const garden = {
+    id: "garden-planting",
+    title: "Garden Planting",
+    description:
+      "Beautiful flower beds and garden designs that bloom throughout the seasons.",
+    icon: Flower2,
+    image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&q=80&w=800",
+    features: ["Flower Beds", "Shrubs & Trees", "Seasonal Plants"],
+    span: "md:col-span-1",
+    large: false,
+  };
+  const hardscape = {
+    id: "hardscaping",
+    title: "Hardscaping & Patios",
+    description:
+      "Transform your outdoor space with stunning patios, walkways, and retaining walls.",
+    icon: HardHat,
+    image: "https://images.pexels.com/photos/6313939/pexels-photo-6313939.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    features: ["Patios", "Walkways", "Retaining Walls"],
+    span: "md:col-span-1",
+    large: false,
+  };
+  const snow = {
+    id: "snow-removal",
+    title: "Snow Removal & Seasonal Contracts",
+    description:
+      "Driveway and walkway clearing, plus seasonal snow contracts so the property is covered before the first storm.",
+    icon: Snowflake,
+    image:
+      "https://images.unsplash.com/photo-1547754980-3df97fed72a8?auto=format&fit=crop&q=80&w=1200",
+    features: ["Seasonal Contracts", "Driveways", "Walkways", "Commercial Lots"],
+    span: snowSeason ? "md:col-span-2 md:row-span-2" : "md:col-span-1",
+    large: snowSeason,
+  };
+  const services = snowSeason
+    ? [
+        snow,
+        { ...lawn, span: "md:col-span-1", large: false },
+        garden,
+        hardscape,
+      ]
+    : [lawn, garden, hardscape];
 
   return (
     <section
@@ -51,12 +69,24 @@ const ServicesSection = ({ onGetQuote }) => {
             Our Services
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4">
-            Professional Landscaping
-            <br />
-            <span className="text-primary">Services</span>
+            {snowSeason ? (
+              <>
+                Seasonal Snow
+                <br />
+                <span className="text-primary">Contracts</span>
+              </>
+            ) : (
+              <>
+                Professional Landscaping
+                <br />
+                <span className="text-primary">Services</span>
+              </>
+            )}
           </h2>
           <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
-            From routine lawn care to complete outdoor transformations, we deliver exceptional results.
+            {snowSeason
+              ? "Snow removal leads the season, with landscaping ready when the ground thaws."
+              : "From routine lawn care to complete outdoor transformations, we deliver exceptional results."}
           </p>
         </div>
 
@@ -65,6 +95,7 @@ const ServicesSection = ({ onGetQuote }) => {
           {services.map((service, index) => (
             <div
               key={service.id}
+              id={`service-${service.id}`}
               className={`${service.span} relative group overflow-hidden rounded-2xl bento-item`}
               data-testid={`service-card-${service.id}`}
             >
@@ -122,7 +153,7 @@ const ServicesSection = ({ onGetQuote }) => {
                     className="w-fit bg-accent hover:bg-accent/90 text-accent-foreground font-body font-semibold group/btn"
                     data-testid="service-cta-btn"
                   >
-                    Get Started
+                    {snowSeason ? "Get a Snow Contract Quote" : "Get Started"}
                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
                   </Button>
                 )}

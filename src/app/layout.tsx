@@ -2,10 +2,14 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 import { DM_Serif_Display, Outfit } from "next/font/google";
+import { headers } from "next/headers";
 import Script from "next/script";
 
 import { MetaPixelPageView } from "@/components/MetaPixelPageView";
+import Snowfall from "@/components/Snowfall";
+import { BUSINESS_EMAIL, BUSINESS_NAME, BUSINESS_PHONE_TEL, SITE_URL } from "@/lib/brand";
 import { META_PIXEL_ID } from "@/lib/metaPixel";
+import { getSnowContractSeason } from "@/lib/siteSettings";
 
 import { Providers } from "./providers";
 
@@ -20,20 +24,20 @@ const bodyFont = Outfit({
   variable: "--font-body"
 });
 
-const siteTitle = "Earl's Landscaping | Professional Landscaping Services";
+const siteTitle = `${BUSINESS_NAME} | Hamilton & the GTA`;
 const siteDescription =
-  "Professional landscaping services for residential and commercial properties";
-const siteUrl = "https://www.earlslandscaping.ca";
-const ogImageUrl = `${siteUrl}/og-snow-removal.jpg`;
+  "Earl's Landscaping and Snow Removal provides landscaping and snow removal, including seasonal snow contracts, for homes and businesses in Hamilton and the GTA.";
+const ogImageUrl = `${SITE_URL}/og-snow-removal.jpg`;
 const ogImageAlt = "A plow truck and snow blower clearing a suburban driveway at dawn";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: siteTitle,
   description: siteDescription,
   openGraph: {
     type: "website",
-    url: siteUrl,
+    url: SITE_URL,
+    siteName: BUSINESS_NAME,
     title: siteTitle,
     description: siteDescription,
     images: [
@@ -60,12 +64,58 @@ export const metadata: Metadata = {
   }
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "LandscapingBusiness",
+  name: BUSINESS_NAME,
+  url: SITE_URL,
+  image: ogImageUrl,
+  telephone: BUSINESS_PHONE_TEL,
+  email: BUSINESS_EMAIL,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Hamilton",
+    addressRegion: "ON",
+    addressCountry: "CA"
+  },
+  areaServed: ["Hamilton", "Burlington", "Oakville", "Mississauga", "Toronto"],
+  description: siteDescription,
+  makesOffer: [
+    "Snow Removal",
+    "Seasonal Snow Contracts",
+    "Lawn Care & Maintenance",
+    "Garden Planting",
+    "Hardscaping"
+  ].map((name) => ({
+    "@type": "Offer",
+    itemOffered: { "@type": "Service", name }
+  }))
+};
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const headerStore = await headers();
+  const pathname = headerStore.get("x-pathname") ?? "";
+  const snowContractSeason = await getSnowContractSeason();
+  const publicSnow = snowContractSeason && !pathname.startsWith("/admin");
+
   return (
-    <html lang="en" className={`${headingFont.variable} ${bodyFont.variable}`}>
+    <html
+      lang="en"
+      className={`${headingFont.variable} ${bodyFont.variable}${publicSnow ? " snow-season" : ""}`}
+    >
       <body>
+        {publicSnow ? <Snowfall /> : null}
         {children}
         <Providers />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c")
+          }}
+        />
         <Script id="meta-pixel" strategy="afterInteractive">
           {`!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?

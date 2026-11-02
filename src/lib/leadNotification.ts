@@ -1,16 +1,9 @@
 import { Resend } from "resend";
 
-import { env } from "@/lib/env";
+import { BUSINESS_NAME, DEFAULT_LEAD_FROM } from "@/lib/brand";
+import { serviceLabel } from "@/lib/services";
 
-const DEFAULT_FROM = "Earl's Landscaping <leads@earlslandscaping.ca>";
 const DEFAULT_TO = ["cbixby.inv@gmail.com", "sales@vevade.com"];
-
-const SERVICE_LABELS: Record<string, string> = {
-  "lawn-care": "Lawn Care & Maintenance",
-  "garden-planting": "Garden Planting",
-  hardscaping: "Hardscaping (Patios, Walkways)",
-  "full-service": "Full Landscaping Service"
-};
 
 export type NewLeadNotice = {
   id: string;
@@ -22,23 +15,29 @@ export type NewLeadNotice = {
   submittedAt: Date;
 };
 
+export type LeadNotificationResult = {
+  status: "sent" | "skipped" | "failed";
+  leadId: string;
+  detail: string;
+  resendId?: string;
+  apiKeyPresent: boolean;
+  fromConfigured: boolean;
+  toConfigured: boolean;
+};
+
 function configuredFrom() {
-  const value = env.LEAD_NOTIFY_FROM?.trim();
-  return value || DEFAULT_FROM;
+  const value = process.env.LEAD_NOTIFY_FROM?.trim();
+  return value || DEFAULT_LEAD_FROM;
 }
 
 function configuredTo() {
-  const raw = env.LEAD_NOTIFY_TO?.trim();
+  const raw = process.env.LEAD_NOTIFY_TO?.trim();
   if (!raw) return DEFAULT_TO;
   const recipients = raw
     .split(",")
     .map((part) => part.trim())
     .filter(Boolean);
   return recipients.length > 0 ? recipients : DEFAULT_TO;
-}
-
-function serviceLabel(serviceType: string) {
-  return SERVICE_LABELS[serviceType] || serviceType;
 }
 
 function formatSubmittedAt(date: Date) {
@@ -77,6 +76,7 @@ function buildContent(lead: NewLeadNotice) {
   const submitted = formatSubmittedAt(lead.submittedAt);
   const note = messageText(lead.message);
   const subject = `New lead: ${oneLine(lead.name)} – ${oneLine(service)}`.slice(0, 200);
+  const intro = `Someone submitted the quote form on the ${BUSINESS_NAME} website.`;
 
   const rows: Array<{ label: string; text: string; html: string }> = [
     { label: "Name", text: lead.name, html: escapeHtml(lead.name) },
@@ -105,7 +105,7 @@ function buildContent(lead: NewLeadNotice) {
   const text = [
     "New quote request",
     "",
-    "Someone submitted the quote form on the Earl's Landscaping website.",
+    intro,
     "",
     ...rows.map((row) => `${row.label}: ${row.text}`),
     "",
@@ -130,7 +130,7 @@ function buildContent(lead: NewLeadNotice) {
   <body style="margin:0;padding:24px;background:#f6f7f4;color:#1a1a1a;font-family:Arial,Helvetica,sans-serif">
     <div lang="en" dir="ltr" style="max-width:560px;margin:0 auto;background:#ffffff;padding:24px;border:1px solid #e4e4e0">
       <h1 style="margin:0 0 8px;font-size:22px;line-height:1.3;color:#1a1a1a">New quote request</h1>
-      <p style="margin:0 0 20px;font-size:15px;line-height:1.5;color:#1a1a1a">Someone submitted the quote form on the Earl's Landscaping website.</p>
+      <p style="margin:0 0 20px;font-size:15px;line-height:1.5;color:#1a1a1a">${escapeHtml(intro)}</p>
       <table style="border-collapse:collapse;width:100%;font-size:15px;line-height:1.5">
         <tbody>
           ${htmlRows}
@@ -151,20 +151,57 @@ function phoneHtml(phone: string) {
   return `<a href="tel:${escapeHtml(dial)}">${safe}</a>`;
 }
 
-export async function notifyNewLead(lead: NewLeadNotice) {
-  const apiKey = env.RESEND_API_KEY?.trim();
+function errorDetail(error: unknown) {
+  if (!error || typeof error !== "object") return String(error);
+  const record = error as { name?: string; message?: string; statusCode?: number | null };
+  const name = record.name || "resend_error";
+  const status = record.statusCode ?? "none";
+  const message = record.message || "Unknown Resend error";
+  return `${name} (${status}): ${message}`;
+}
+
+function logResult(result: LeadNotificationResult) {
+  const line = `[lead-notification] ${JSON.stringify(result)}`;
+  if (result.status === "sent") console.info(line);
+  else console.error(line);
+}
+
+/**
+ * Sends the owner notification before the API response is finished.
+ * `after()` was not used: a missing key or a dropped callback never called Resend,
+ * and the failure was easy to miss in the request log.
+ */
+export async function notifyNewLead(lead: NewLeadNotice): Promise<LeadNotificationResult> {
+  const apiKey = process.env.RESEND_API_KEY?.trim() || "";
+  const fromConfigured = Boolean(process.env.LEAD_NOTIFY_FROM?.trim());
+  const toConfigured = Boolean(process.env.LEAD_NOTIFY_TO?.trim());
+  const base = {
+    leadId: lead.id,
+    apiKeyPresent: Boolean(apiKey),
+    fromConfigured,
+    toConfigured
+  };
+
   if (!apiKey) {
-    console.warn(`Skipping lead notification for ${lead.id}: RESEND_API_KEY is not set`);
-    return;
+    const result: LeadNotificationResult = {
+      ...base,
+      status: "skipped",
+      detail:
+        "RESEND_API_KEY is not set in this deployment. The lead was saved, but Resend was not called. Add the key in Vercel Production and redeploy."
+    };
+    logResult(result);
+    return result;
   }
 
   try {
     const resend = new Resend(apiKey);
     const { subject, html, text } = buildContent(lead);
+    const from = configuredFrom();
+    const to = configuredTo();
     const { data, error } = await resend.emails.send(
       {
-        from: configuredFrom(),
-        to: configuredTo(),
+        from,
+        to,
         replyTo: lead.email,
         subject,
         html,
@@ -174,12 +211,30 @@ export async function notifyNewLead(lead: NewLeadNotice) {
     );
 
     if (error) {
-      console.error(`Failed to send lead notification for ${lead.id}:`, error.message);
-      return;
+      const result: LeadNotificationResult = {
+        ...base,
+        status: "failed",
+        detail: errorDetail(error)
+      };
+      logResult(result);
+      return result;
     }
 
-    console.info(`Sent lead notification ${data?.id ?? ""} for lead ${lead.id}`);
+    const result: LeadNotificationResult = {
+      ...base,
+      status: "sent",
+      detail: "Resend accepted the lead notification",
+      resendId: data?.id
+    };
+    logResult(result);
+    return result;
   } catch (err) {
-    console.error(`Failed to send lead notification for ${lead.id}:`, err);
+    const result: LeadNotificationResult = {
+      ...base,
+      status: "failed",
+      detail: err instanceof Error ? `${err.name}: ${err.message}` : errorDetail(err)
+    };
+    logResult(result);
+    return result;
   }
 }

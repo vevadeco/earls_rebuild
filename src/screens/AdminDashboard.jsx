@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/tabs";
 import {
   Leaf,
+  Snowflake,
   LogOut,
   Users,
   Eye,
@@ -52,6 +53,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import { BUSINESS_NAME } from "@/lib/brand";
+import { serviceShortLabel } from "@/lib/services";
 
 const API = "/api";
 
@@ -69,18 +72,22 @@ const AdminDashboard = () => {
     deadline_date: "",
   });
   const [isSavingPromo, setIsSavingPromo] = useState(false);
+  const [snowContractSeason, setSnowContractSeason] = useState(false);
+  const [isSavingSeason, setIsSavingSeason] = useState(false);
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [leadsRes, analyticsRes, promoRes] = await Promise.all([
+      const [leadsRes, analyticsRes, promoRes, seasonRes] = await Promise.all([
         axios.get(`${API}/admin/leads`),
         axios.get(`${API}/admin/analytics`),
         axios.get(`${API}/admin/promo-banner`),
+        axios.get(`${API}/admin/site-settings`),
       ]);
       setLeads(leadsRes.data);
       setAnalytics(analyticsRes.data);
       setPromoSettings(promoRes.data);
+      setSnowContractSeason(Boolean(seasonRes.data.snowContractSeason));
     } catch (error) {
       console.error("Error fetching data:", error);
       if (error.response?.status === 401) {
@@ -163,14 +170,23 @@ const AdminDashboard = () => {
     }
   };
 
-  const getServiceLabel = (serviceType) => {
-    const labels = {
-      "lawn-care": "Lawn Care",
-      "garden-planting": "Garden Planting",
-      hardscaping: "Hardscaping",
-      "full-service": "Full Service",
-    };
-    return labels[serviceType] || serviceType;
+  const handleSnowSeasonChange = async (checked) => {
+    const previous = snowContractSeason;
+    setSnowContractSeason(checked);
+    setIsSavingSeason(true);
+    try {
+      await axios.put(`${API}/admin/site-settings`, { snowContractSeason: checked });
+      toast.success(
+        checked
+          ? "Snow contract season is on. The public site updates on the next visit."
+          : "Snow contract season is off. The landscaping site returns on the next visit."
+      );
+    } catch (error) {
+      setSnowContractSeason(previous);
+      toast.error("Failed to update snow contract season");
+    } finally {
+      setIsSavingSeason(false);
+    }
   };
 
   const getStatusColor = (status) => {
@@ -197,7 +213,7 @@ const AdminDashboard = () => {
                 <Leaf className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h1 className="font-heading text-xl">Earl's Landscaping</h1>
+                <h1 className="font-heading text-lg sm:text-xl">{BUSINESS_NAME}</h1>
                 <p className="text-xs text-primary-foreground/70 font-body">
                   Admin Dashboard
                 </p>
@@ -248,6 +264,10 @@ const AdminDashboard = () => {
               <TabsTrigger value="promo" className="font-body">
                 <Megaphone className="w-4 h-4 mr-2" />
                 Promo Banner
+              </TabsTrigger>
+              <TabsTrigger value="season" className="font-body">
+                <Snowflake className="w-4 h-4 mr-2" />
+                Snow Season
               </TabsTrigger>
             </TabsList>
 
@@ -489,7 +509,7 @@ const AdminDashboard = () => {
                                 </div>
                               </TableCell>
                               <TableCell className="font-body">
-                                {getServiceLabel(lead.service_type)}
+                                {serviceShortLabel(lead.service_type)}
                               </TableCell>
                               <TableCell>
                                 <Select
@@ -686,6 +706,44 @@ const AdminDashboard = () => {
                       {isSavingPromo ? "Saving..." : "Save Changes"}
                     </Button>
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="season">
+              <Card data-testid="snow-season-card">
+                <CardHeader>
+                  <CardTitle className="font-heading text-lg flex items-center gap-2">
+                    <Snowflake className="w-5 h-5" />
+                    Snow Contract Season
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between gap-6 p-4 bg-muted/50 rounded-lg">
+                    <div>
+                      <Label htmlFor="snow-season-switch" className="font-body font-semibold text-foreground">
+                        Snow Contract Season
+                      </Label>
+                      <p className="text-sm text-muted-foreground font-body mt-1 max-w-xl">
+                        Only signed-in admins see this switch. Visitors never see the toggle.
+                        When it is on, the public site uses the winter snow-removal layout.
+                        When it is off, the landscaping layout stays as it is. The change is
+                        saved in the database and shows up on the next visit. No redeploy.
+                      </p>
+                    </div>
+                    <Switch
+                      id="snow-season-switch"
+                      checked={snowContractSeason}
+                      disabled={isSavingSeason}
+                      onCheckedChange={handleSnowSeasonChange}
+                      data-testid="snow-season-switch"
+                    />
+                  </div>
+                  <p className="font-body text-sm text-muted-foreground" data-testid="snow-season-status">
+                    {snowContractSeason
+                      ? "Public site is in snow contract season mode."
+                      : "Public site is in landscaping mode."}
+                  </p>
                 </CardContent>
               </Card>
             </TabsContent>

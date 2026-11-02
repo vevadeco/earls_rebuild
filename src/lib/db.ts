@@ -47,6 +47,13 @@ async function ensureSchema() {
     );
   `;
 
+  await sql`
+    CREATE TABLE IF NOT EXISTS site_settings (
+      id INTEGER PRIMARY KEY,
+      snow_contract_season BOOLEAN NOT NULL DEFAULT FALSE
+    );
+  `;
+
   await sql`CREATE INDEX IF NOT EXISTS leads_created_at_idx ON leads(created_at DESC);`;
   await sql`CREATE INDEX IF NOT EXISTS leads_status_idx ON leads(status);`;
   await sql`CREATE INDEX IF NOT EXISTS pageviews_created_at_idx ON pageviews(created_at DESC);`;

@@ -1,15 +1,19 @@
-import { after, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { sql } from "@vercel/postgres";
 import { dbReady, isDbConfigured } from "@/lib/db";
 import { notifyNewLead } from "@/lib/leadNotification";
+import { SERVICE_TYPES } from "@/lib/services";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const LeadCreateSchema = z.object({
   name: z.string().trim().min(1),
   email: z.string().trim().email(),
   phone: z.string().trim().min(5),
-  service_type: z.string().trim().min(1),
+  service_type: z.enum(SERVICE_TYPES),
   message: z.string().trim().optional(),
   source: z.string().trim().optional()
 });
@@ -51,18 +55,18 @@ export async function POST(req: Request) {
     )
   `;
 
-  after(() =>
-    notifyNewLead({
-      id,
-      name,
-      email,
-      phone,
-      serviceType: service_type,
-      message,
-      submittedAt
-    })
-  );
+  console.info(`[lead] saved id=${id} service=${service_type}`);
+
+  // Await the email in this request. after() can return 201 and then never call Resend.
+  await notifyNewLead({
+    id,
+    name,
+    email,
+    phone,
+    serviceType: service_type,
+    message,
+    submittedAt
+  });
 
   return NextResponse.json({ success: true, message: "Lead created", id }, { status: 201 });
 }
-

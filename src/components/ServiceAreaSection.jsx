@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { MapPin, CheckCircle } from "lucide-react";
 
-const ServiceAreaSection = ({ onGetQuote }) => {
+const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
   const serviceAreas = [
     { name: "Hamilton", primary: true },
     { name: "Burlington", primary: false },
@@ -119,8 +119,9 @@ const ServiceAreaSection = ({ onGetQuote }) => {
               <span className="text-primary">& The GTA</span>
             </h2>
             <p className="font-body text-muted-foreground text-lg mb-8 leading-relaxed">
-              Based in Hamilton with over 15 years of experience, we proudly serve 
-              homeowners and businesses throughout the Greater Toronto and Hamilton Area.
+              {snowSeason
+                ? "Seasonal snow contracts and storm clearing for homes and businesses throughout the Greater Toronto and Hamilton Area."
+                : "Based in Hamilton with over 15 years of experience, we proudly serve homeowners and businesses throughout the Greater Toronto and Hamilton Area."}
             </p>
 
             {/* Service Areas Grid */}
@@ -160,7 +161,7 @@ const ServiceAreaSection = ({ onGetQuote }) => {
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-body font-semibold px-8 py-6 text-lg btn-primary"
               data-testid="service-area-cta-btn"
             >
-              Get a Free Quote for Your Area
+              {snowSeason ? "Get a Snow Contract Quote" : "Get a Free Quote for Your Area"}
             </Button>
           </div>
         </div>

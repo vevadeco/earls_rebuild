@@ -17,7 +17,7 @@ const TestimonialsSection = () => {
       name: "Michael Chen",
       location: "Burlington",
       rating: 5,
-      text: "We've been using Earl's Landscaping for our lawn care for 3 years now. Always reliable, professional, and our lawn has never looked better.",
+      text: "We've been using Earl's Landscaping and Snow Removal for our lawn care for 3 years now. Always reliable, professional, and our lawn has never looked better.",
       avatar: "MC",
     },
     {
