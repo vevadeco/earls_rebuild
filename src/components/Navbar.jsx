@@ -13,11 +13,16 @@ import BrandLockup from "@/components/BrandLockup";
 import { BUSINESS_NAME } from "@/lib/brand";
 import { orderedServices } from "@/lib/services";
 
+function serviceHref(service, snowSeason) {
+  if (service.value === "full-service" || (service.snow && !snowSeason)) return "#services";
+  return `#service-${service.value}`;
+}
+
 const Navbar = ({ onGetQuote, hasPromo = false, snowSeason = false }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const services = orderedServices(snowSeason);
-  const quoteLabel = snowSeason ? "Snow Contract Quote" : "Get Free Quote";
+  const quoteLabel = snowSeason ? "Snow Removal Quote" : "Get Free Quote";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,12 +68,7 @@ const Navbar = ({ onGetQuote, hasPromo = false, snowSeason = false }) => {
                 {services.map((service) => (
                   <DropdownMenuItem key={service.value} asChild>
                     <a
-                      href={
-                        service.value === "full-service" ||
-                        (service.value === "snow-removal" && !snowSeason)
-                          ? "#services"
-                          : `#service-${service.value}`
-                      }
+                      href={serviceHref(service, snowSeason)}
                       className="font-body cursor-pointer"
                       data-testid={`nav-service-${service.value}`}
                     >
@@ -116,12 +116,7 @@ const Navbar = ({ onGetQuote, hasPromo = false, snowSeason = false }) => {
             {services.map((service) => (
               <a
                 key={service.value}
-                href={
-                  service.value === "full-service" ||
-                  (service.value === "snow-removal" && !snowSeason)
-                    ? "#services"
-                    : `#service-${service.value}`
-                }
+                href={serviceHref(service, snowSeason)}
                 className="block py-2 text-foreground/80 hover:text-primary transition-colors font-body"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

@@ -3,7 +3,9 @@ export const SERVICE_TYPES = [
   "garden-planting",
   "hardscaping",
   "full-service",
-  "snow-removal"
+  "snow-removal",
+  "snow-seasonal",
+  "snow-per-visit"
 ] as const;
 
 export type ServiceType = (typeof SERVICE_TYPES)[number];
@@ -13,6 +15,8 @@ export type ServiceOption = {
   label: string;
   shortLabel: string;
   snow: boolean;
+  /** Hidden from quote menus. Kept so older snow-removal leads still label correctly. */
+  legacy?: boolean;
 };
 
 export const SERVICES: ServiceOption[] = [
@@ -44,6 +48,19 @@ export const SERVICES: ServiceOption[] = [
     value: "snow-removal",
     label: "Snow Removal",
     shortLabel: "Snow Removal",
+    snow: true,
+    legacy: true
+  },
+  {
+    value: "snow-seasonal",
+    label: "Snow Removal – Seasonal Contract",
+    shortLabel: "Snow Seasonal",
+    snow: true
+  },
+  {
+    value: "snow-per-visit",
+    label: "Snow Removal – Per Visit",
+    shortLabel: "Snow Per Visit",
     snow: true
   }
 ];
@@ -62,8 +79,9 @@ export function serviceShortLabel(value: string) {
   return SERVICE_BY_VALUE.get(value as ServiceType)?.shortLabel ?? value;
 }
 
-/** Snow services lead the list only while Snow Contract Season is on. */
+/** Quote-form and nav options. Snow choices lead only while Snow Contract Season is on. */
 export function orderedServices(snowSeason: boolean) {
-  if (!snowSeason) return SERVICES;
-  return [...SERVICES].sort((a, b) => Number(b.snow) - Number(a.snow));
+  const listed = SERVICES.filter((service) => !service.legacy);
+  if (!snowSeason) return listed;
+  return [...listed].sort((a, b) => Number(b.snow) - Number(a.snow));
 }

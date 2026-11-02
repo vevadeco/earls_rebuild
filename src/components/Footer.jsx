@@ -8,8 +8,8 @@ const Footer = ({ snowSeason = false }) => {
 
   const services = snowSeason
     ? [
-        "Snow Removal",
         "Seasonal Snow Contracts",
+        "Per-Visit Snow Removal",
         "Lawn Care & Maintenance",
         "Garden Planting",
         "Hardscaping",
@@ -44,7 +44,7 @@ const Footer = ({ snowSeason = false }) => {
             </div>
             <p className="font-body text-primary-foreground/80 text-sm leading-relaxed mb-6">
               {snowSeason
-                ? "Seasonal snow contracts and driveway clearing across Hamilton and the GTA, with landscaping when the ground thaws."
+                ? "Seasonal snow contracts and per-visit clearing across Hamilton and the GTA, with landscaping when the ground thaws."
                 : "Hamilton's trusted landscaping experts. Transforming outdoor spaces with quality craftsmanship since 2009."}
             </p>
             <div className="space-y-3">

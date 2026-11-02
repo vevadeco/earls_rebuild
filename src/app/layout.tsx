@@ -86,6 +86,7 @@ const structuredData = {
   makesOffer: [
     "Snow Removal",
     "Seasonal Snow Contracts",
+    "Per-Visit Snow Removal",
     "Lawn Care & Maintenance",
     "Garden Planting",
     "Hardscaping"

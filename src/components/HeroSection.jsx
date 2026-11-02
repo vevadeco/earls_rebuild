@@ -23,7 +23,7 @@ const API = "/api";
 
 const HeroSection = ({ snowSeason = false }) => {
   const services = orderedServices(snowSeason);
-  const defaultService = snowSeason ? "snow-removal" : "";
+  const defaultService = snowSeason ? "snow-seasonal" : "";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -72,8 +72,8 @@ const HeroSection = ({ snowSeason = false }) => {
       ];
   const highlights = snowSeason
     ? [
-        "Seasonal snow contracts",
-        "Driveways, walkways, and lots",
+        "Seasonal contracts",
+        "Per-visit, on-call clearing",
         "Licensed & insured professionals",
       ]
     : [
@@ -109,7 +109,7 @@ const HeroSection = ({ snowSeason = false }) => {
                 <>
                   Snow Removal
                   <br />
-                  <span className="text-secondary">& Seasonal Contracts</span>
+                  <span className="text-secondary">Seasonal or Per Visit</span>
                 </>
               ) : (
                 <>
@@ -121,7 +121,7 @@ const HeroSection = ({ snowSeason = false }) => {
             </h1>
             <p className="font-body text-lg sm:text-xl text-white/90 mb-8 max-w-lg leading-relaxed">
               {snowSeason
-                ? "Hamilton's crew for driveway and walkway clearing, commercial lots, and seasonal snow contracts. We're ready before the first storm."
+                ? "Choose a seasonal snow contract or per-visit, on-call clearing for driveways, walkways, and lots. We're ready before the first storm."
                 : "Hamilton's trusted landscaping experts. From lush lawns to stunning hardscapes, we bring your outdoor vision to life with over 15 years of experience."}
             </p>
 
@@ -159,7 +159,7 @@ const HeroSection = ({ snowSeason = false }) => {
             <Card className="bg-card shadow-2xl border-0 rounded-2xl overflow-hidden" data-testid="lead-form-card">
               <CardHeader className="bg-primary text-primary-foreground p-6">
                 <CardTitle className="font-heading text-2xl text-center">
-                  {snowSeason ? "Get a Snow Contract Quote" : "Get Your Free Quote"}
+                  {snowSeason ? "Seasonal or Per-Visit Quote" : "Get Your Free Quote"}
                 </CardTitle>
                 <p className="text-center text-primary-foreground/80 font-body text-sm mt-2">
                   We'll respond within 24 hours
@@ -268,7 +268,7 @@ const HeroSection = ({ snowSeason = false }) => {
                       {isSubmitting
                         ? "Submitting..."
                         : snowSeason
-                          ? "Get My Snow Contract Quote"
+                          ? "Get My Snow Quote"
                           : "Get My Free Quote"}
                     </Button>
 

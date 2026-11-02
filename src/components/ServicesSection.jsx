@@ -35,25 +35,32 @@ const ServicesSection = ({ onGetQuote, snowSeason = false }) => {
     span: "md:col-span-1",
     large: false,
   };
-  const snow = {
-    id: "snow-removal",
-    title: "Snow Removal & Seasonal Contracts",
+  const snowSeasonal = {
+    id: "snow-seasonal",
+    title: "Seasonal Snow Contract",
     description:
-      "Driveway and walkway clearing, plus seasonal snow contracts so the property is covered before the first storm.",
+      "A season-long plan for driveways, walkways, and lots, so the property is covered before the first storm.",
     icon: Snowflake,
     image:
       "https://images.unsplash.com/photo-1547754980-3df97fed72a8?auto=format&fit=crop&q=80&w=1200",
-    features: ["Seasonal Contracts", "Driveways", "Walkways", "Commercial Lots"],
-    span: snowSeason ? "md:col-span-2 md:row-span-2" : "md:col-span-1",
-    large: snowSeason,
+    features: ["Seasonal Contract", "Driveways", "Walkways", "Commercial Lots"],
+    span: "md:col-span-2 md:row-span-2",
+    large: true,
+  };
+  const snowPerVisit = {
+    id: "snow-per-visit",
+    title: "Per-Visit Snow Removal",
+    description:
+      "One-time, on-call clearing when you need a single visit instead of a seasonal contract.",
+    icon: Snowflake,
+    image:
+      "https://images.unsplash.com/photo-1483664852095-d6e1d0c1d311?auto=format&fit=crop&q=80&w=1200",
+    features: ["Per Visit", "On-Call", "Driveways", "Walkways"],
+    span: "md:col-span-1",
+    large: false,
   };
   const services = snowSeason
-    ? [
-        snow,
-        { ...lawn, span: "md:col-span-1", large: false },
-        garden,
-        hardscape,
-      ]
+    ? [snowSeasonal, snowPerVisit, { ...lawn, span: "md:col-span-1", large: false }, garden, hardscape]
     : [lawn, garden, hardscape];
 
   return (
@@ -71,9 +78,9 @@ const ServicesSection = ({ onGetQuote, snowSeason = false }) => {
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4">
             {snowSeason ? (
               <>
-                Seasonal Snow
+                Snow Removal
                 <br />
-                <span className="text-primary">Contracts</span>
+                <span className="text-primary">Seasonal or Per Visit</span>
               </>
             ) : (
               <>
@@ -85,7 +92,7 @@ const ServicesSection = ({ onGetQuote, snowSeason = false }) => {
           </h2>
           <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
             {snowSeason
-              ? "Snow removal leads the season, with landscaping ready when the ground thaws."
+              ? "Seasonal contracts and one-time clearing, with landscaping ready when the ground thaws."
               : "From routine lawn care to complete outdoor transformations, we deliver exceptional results."}
           </p>
         </div>
@@ -153,7 +160,7 @@ const ServicesSection = ({ onGetQuote, snowSeason = false }) => {
                     className="w-fit bg-accent hover:bg-accent/90 text-accent-foreground font-body font-semibold group/btn"
                     data-testid="service-cta-btn"
                   >
-                    {snowSeason ? "Get a Snow Contract Quote" : "Get Started"}
+                    {snowSeason ? "Get a Snow Quote" : "Get Started"}
                     <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
                   </Button>
                 )}

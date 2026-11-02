@@ -120,7 +120,7 @@ const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
             </h2>
             <p className="font-body text-muted-foreground text-lg mb-8 leading-relaxed">
               {snowSeason
-                ? "Seasonal snow contracts and storm clearing for homes and businesses throughout the Greater Toronto and Hamilton Area."
+                ? "Seasonal snow contracts and per-visit clearing for homes and businesses throughout the Greater Toronto and Hamilton Area."
                 : "Based in Hamilton with over 15 years of experience, we proudly serve homeowners and businesses throughout the Greater Toronto and Hamilton Area."}
             </p>
 
@@ -161,7 +161,7 @@ const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-body font-semibold px-8 py-6 text-lg btn-primary"
               data-testid="service-area-cta-btn"
             >
-              {snowSeason ? "Get a Snow Contract Quote" : "Get a Free Quote for Your Area"}
+              {snowSeason ? "Get a Snow Removal Quote" : "Get a Free Quote for Your Area"}
             </Button>
           </div>
         </div>

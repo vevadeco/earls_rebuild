@@ -23,13 +23,13 @@ The public site reads that row on each request (`force-dynamic`, no static cache
 When the switch is **on**:
 
 - Winter colour palette
-- Hero leads with snow removal and seasonal snow contracts
-- Call to action is “Get a Snow Contract Quote”
-- Snow removal is ordered first in the services menu, services section, and footer
-- The quote form defaults to Snow Removal
+- Hero offers seasonal contracts and per-visit snow removal
+- Call to action is a snow removal quote
+- Seasonal and per-visit snow cards lead the services section, and those options are first in the menu and footer
+- The quote form defaults to Snow Removal – Seasonal Contract, with Snow Removal – Per Visit as the next choice. The lead email uses that label.
 - A light snowfall effect runs, and it is hidden when the visitor has `prefers-reduced-motion`
 
-When the switch is **off**, the landscaping layout stays as it is. Snow Removal remains available in the quote form and the services menu.
+When the switch is **off**, the landscaping layout stays as it is. The quote form still offers Snow Removal – Seasonal Contract and Snow Removal – Per Visit.
 
 ## Lead emails
 
@@ -41,7 +41,7 @@ Search Vercel runtime logs for `[lead-notification]` or `[lead] saved`.
 - `status: "skipped"` means `RESEND_API_KEY` is missing on that deployment. Add it under Production and redeploy. Vercel only gives a deployment the environment variables that existed when that deployment was created.
 - `status: "failed"` means Resend was called and rejected the send. The log includes the Resend error name, status, and message.
 
-Snow Removal is stored as `service_type` `snow-removal` and the email labels it “Snow Removal”.
+A seasonal quote is stored as `snow-seasonal` and emailed as “Snow Removal – Seasonal Contract”. A one-time quote is `snow-per-visit` and emailed as “Snow Removal – Per Visit”. Older `snow-removal` leads still display as “Snow Removal”.
 
 ## Environment variables
 
