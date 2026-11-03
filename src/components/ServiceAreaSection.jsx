@@ -1,18 +1,50 @@
 import { Button } from "@/components/ui/button";
-import { MapPin, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
+
+// Web Mercator frame. The static image was cropped with these exact values,
+// so a lat/long lands on the same pixel as the city on the map.
+const MAP = {
+  lat: 43.2557,
+  lng: -79.8711,
+  zoom: 11,
+  width: 1200,
+  height: 1800,
+};
+
+const serviceAreas = [
+  { name: "Hamilton", lat: 43.2557, lng: -79.8711, primary: true, label: "right" },
+  { name: "Burlington", lat: 43.3255, lng: -79.799, primary: false, label: "left" },
+  { name: "Oakville", lat: 43.4474, lng: -79.6667, primary: false, label: "left" },
+  { name: "Mississauga", lat: 43.589, lng: -79.6441, primary: false, label: "below" },
+  { name: "Stoney Creek", lat: 43.2178, lng: -79.7658, primary: false, label: "below" },
+  { name: "Ancaster", lat: 43.2181, lng: -79.9871, primary: false, label: "below" },
+  { name: "Dundas", lat: 43.2668, lng: -79.954, primary: false, label: "above" },
+  { name: "Grimsby", lat: 43.1945, lng: -79.562, primary: false, label: "left" },
+];
+
+function project(lat, lng) {
+  const scale = 256 * 2 ** MAP.zoom;
+  const xOf = (longitude) => ((longitude + 180) / 360) * scale;
+  const yOf = (latitude) => {
+    const radians = (latitude * Math.PI) / 180;
+    return ((1 - Math.log(Math.tan(radians) + 1 / Math.cos(radians)) / Math.PI) / 2) * scale;
+  };
+  const originX = xOf(MAP.lng) - MAP.width / 2;
+  const originY = yOf(MAP.lat) - MAP.height / 2;
+  return {
+    left: `${((xOf(lng) - originX) / MAP.width) * 100}%`,
+    top: `${((yOf(lat) - originY) / MAP.height) * 100}%`,
+  };
+}
+
+const labelClass = {
+  above: "bottom-full mb-1 left-1/2 -translate-x-1/2",
+  below: "top-full mt-1 left-1/2 -translate-x-1/2",
+  left: "right-full mr-1.5 top-1/2 -translate-y-1/2",
+  right: "left-full ml-1.5 top-1/2 -translate-y-1/2",
+};
 
 const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
-  const serviceAreas = [
-    { name: "Hamilton", primary: true },
-    { name: "Burlington", primary: false },
-    { name: "Oakville", primary: false },
-    { name: "Mississauga", primary: false },
-    { name: "Stoney Creek", primary: false },
-    { name: "Ancaster", primary: false },
-    { name: "Dundas", primary: false },
-    { name: "Grimsby", primary: false },
-  ];
-
   return (
     <section
       id="service-area"
@@ -21,80 +53,53 @@ const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Map Section */}
           <div className="relative order-2 lg:order-1">
             <div
-              className="relative rounded-2xl overflow-hidden shadow-xl map-container"
+              className="relative rounded-2xl overflow-hidden shadow-xl map-container bg-[#f2efe9]"
               data-testid="service-area-map"
             >
-              {/* Static Map Image */}
-              <img
-                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=1000"
-                alt="Greater Toronto and Hamilton Area Map"
-                className="w-full h-[400px] lg:h-[500px] object-cover"
-              />
-              
-              {/* Map Overlay with Service Area */}
-              <div className="absolute inset-0 bg-primary/10" />
-              
-              {/* Location Pins */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative w-full h-full">
-                  {/* Hamilton - Main Pin */}
+              <div className="relative" style={{ aspectRatio: `${MAP.width} / ${MAP.height}` }}>
+                <img
+                  src="/hamilton-service-area.jpg"
+                  alt="Map of the Hamilton area from Grimsby to Mississauga, centred on Hamilton"
+                  className="absolute inset-0 h-full w-full"
+                  width={MAP.width}
+                  height={MAP.height}
+                />
+                {serviceAreas.map((area) => (
                   <div
-                    className="absolute left-[30%] top-[60%] transform -translate-x-1/2 -translate-y-1/2"
-                    data-testid="map-pin-hamilton"
+                    key={area.name}
+                    className="absolute"
+                    style={project(area.lat, area.lng)}
+                    data-testid={`map-pin-${area.name.toLowerCase().replace(" ", "-")}`}
                   >
-                    <div className="relative">
-                      <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                        <MapPin className="w-8 h-8 text-primary-foreground" />
-                      </div>
-                      <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                        <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-body font-semibold">
-                          Hamilton HQ
-                        </span>
-                      </div>
+                    <div className="relative -translate-x-1/2 -translate-y-1/2">
+                      <span
+                        className={`block rounded-full border-2 border-white shadow-md ${
+                          area.primary ? "h-4 w-4 bg-primary" : "h-3 w-3 bg-primary"
+                        }`}
+                      />
+                      <span
+                        className={`absolute whitespace-nowrap rounded-full bg-white/95 px-2 py-0.5 text-[11px] font-body font-semibold text-foreground shadow ${
+                          labelClass[area.label]
+                        }`}
+                      >
+                        {area.primary ? "Hamilton HQ" : area.name}
+                      </span>
                     </div>
                   </div>
-
-                  {/* Burlington Pin */}
-                  <div
-                    className="absolute left-[40%] top-[45%] transform -translate-x-1/2 -translate-y-1/2"
-                  >
-                    <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center shadow-md">
-                      <MapPin className="w-4 h-4 text-secondary-foreground" />
-                    </div>
-                  </div>
-
-                  {/* Oakville Pin */}
-                  <div
-                    className="absolute left-[50%] top-[40%] transform -translate-x-1/2 -translate-y-1/2"
-                  >
-                    <div className="w-8 h-8 bg-secondary rounded-full flex items-center justify-center shadow-md">
-                      <MapPin className="w-4 h-4 text-secondary-foreground" />
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
-
-              {/* Map Legend */}
-              <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 shadow-lg">
-                <p className="font-body text-xs text-muted-foreground mb-2">Service Area</p>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 bg-primary rounded-full" />
-                    <span className="text-xs font-body">Headquarters</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 bg-secondary rounded-full" />
-                    <span className="text-xs font-body">Nearby areas</span>
-                  </div>
-                </div>
-              </div>
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                className="absolute bottom-2 right-2 rounded bg-white/90 px-2 py-1 text-[10px] font-body text-foreground/70"
+                rel="noopener noreferrer"
+              >
+                © OpenStreetMap
+              </a>
             </div>
           </div>
 
-          {/* Content Section */}
           <div className="order-1 lg:order-2">
             <span className="inline-block px-4 py-1.5 bg-secondary/30 text-primary font-body font-medium text-sm rounded-full mb-4">
               Service Area
@@ -110,15 +115,12 @@ const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
                 : "Based in Hamilton with over 15 years of experience, we proudly serve homeowners and businesses throughout the Greater Toronto and Hamilton Area."}
             </p>
 
-            {/* Service Areas Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-              {serviceAreas.map((area, index) => (
+              {serviceAreas.map((area) => (
                 <div
                   key={area.name}
                   className={`flex items-center gap-2 p-3 rounded-lg ${
-                    area.primary
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted/50"
+                    area.primary ? "bg-primary text-primary-foreground" : "bg-muted/50"
                   }`}
                   data-testid={`service-area-${area.name.toLowerCase().replace(" ", "-")}`}
                 >
