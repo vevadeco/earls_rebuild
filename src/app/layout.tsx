@@ -81,7 +81,7 @@ const structuredData = {
     addressRegion: "ON",
     addressCountry: "CA"
   },
-  areaServed: ["Hamilton", "Burlington", "Oakville", "Mississauga"],
+  areaServed: ["Hamilton", "Burlington", "Stoney Creek", "Ancaster", "Dundas", "Grimsby"],
   description: siteDescription,
   makesOffer: [
     "Snow Removal",

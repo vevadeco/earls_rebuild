@@ -6,16 +6,14 @@ import { CheckCircle } from "lucide-react";
 const MAP = {
   lat: 43.2557,
   lng: -79.8711,
-  zoom: 11,
-  width: 1200,
-  height: 1800,
+  zoom: 12,
+  width: 2100,
+  height: 980,
 };
 
 const serviceAreas = [
   { name: "Hamilton", lat: 43.2557, lng: -79.8711, primary: true, label: "right" },
   { name: "Burlington", lat: 43.3255, lng: -79.799, primary: false, label: "left" },
-  { name: "Oakville", lat: 43.4474, lng: -79.6667, primary: false, label: "left" },
-  { name: "Mississauga", lat: 43.589, lng: -79.6441, primary: false, label: "below" },
   { name: "Stoney Creek", lat: 43.2178, lng: -79.7658, primary: false, label: "below" },
   { name: "Ancaster", lat: 43.2181, lng: -79.9871, primary: false, label: "below" },
   { name: "Dundas", lat: 43.2668, lng: -79.954, primary: false, label: "above" },
@@ -61,7 +59,7 @@ const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
               <div className="relative" style={{ aspectRatio: `${MAP.width} / ${MAP.height}` }}>
                 <img
                   src="/hamilton-service-area.jpg"
-                  alt="Map of the Hamilton area from Grimsby to Mississauga, centred on Hamilton"
+                  alt="Map of the Hamilton area from Grimsby to Burlington, centred on Hamilton"
                   className="absolute inset-0 h-full w-full"
                   width={MAP.width}
                   height={MAP.height}

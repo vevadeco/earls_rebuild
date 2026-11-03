@@ -203,23 +203,22 @@ const AdminDashboard = () => {
   const statuses = ["new", "contacted", "qualified", "converted", "lost"];
 
   return (
-    <div className="min-h-screen bg-muted/30" data-testid="admin-dashboard">
-      {/* Header */}
+    <div className="min-h-screen overflow-x-hidden bg-muted/30" data-testid="admin-dashboard">
       <header className="bg-primary text-primary-foreground shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+          <div className="flex flex-wrap items-center justify-between gap-3 py-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary">
                 <Leaf className="w-5 h-5 text-primary" />
               </div>
-              <div>
-                <h1 className="font-heading text-lg sm:text-xl">{BUSINESS_NAME}</h1>
+              <div className="min-w-0">
+                <h1 className="font-heading text-base leading-tight sm:text-xl">{BUSINESS_NAME}</h1>
                 <p className="text-xs text-primary-foreground/70 font-body">
                   Admin Dashboard
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="sm"
@@ -227,8 +226,8 @@ const AdminDashboard = () => {
                 className="text-primary-foreground hover:bg-primary-foreground/10"
                 data-testid="refresh-btn"
               >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Refresh
+                <RefreshCw className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Refresh</span>
               </Button>
               <Button
                 variant="ghost"
@@ -237,23 +236,23 @@ const AdminDashboard = () => {
                 className="text-primary-foreground hover:bg-primary-foreground/10"
                 data-testid="logout-btn"
               >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                <LogOut className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Logout</span>
               </Button>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto min-w-0 px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="bg-card border">
-              <TabsTrigger value="overview" className="font-body">
+            <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-card border p-1">
+              <TabsTrigger value="overview" className="h-9 font-body px-2.5 sm:px-3">
                 <TrendingUp className="w-4 h-4 mr-2" />
                 Overview
               </TabsTrigger>
@@ -435,7 +434,7 @@ const AdminDashboard = () => {
             {/* Leads Tab */}
             <TabsContent value="leads">
               <Card data-testid="leads-table-card">
-                <CardHeader className="flex flex-row items-center justify-between">
+                <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
                   <CardTitle className="font-heading text-lg">
                     All Leads ({leads.length})
                   </CardTitle>
@@ -450,7 +449,7 @@ const AdminDashboard = () => {
                     Export CSV
                   </Button>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="min-w-0">
                   {leads.length === 0 ? (
                     <div className="text-center py-12">
                       <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
@@ -460,7 +459,89 @@ const AdminDashboard = () => {
                       </p>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto">
+                    <>
+                    <div className="space-y-3 md:hidden">
+                      {leads.map((lead) => (
+                        <article
+                          key={lead.id}
+                          className="space-y-3 rounded-lg border p-4"
+                          data-testid={`lead-card-${lead.id}`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <h3 className="min-w-0 break-words font-body font-semibold text-foreground">
+                              {lead.name}
+                            </h3>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 shrink-0 p-0"
+                                  data-testid={`lead-actions-${lead.id}`}
+                                >
+                                  <MoreVertical className="w-4 h-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => handleDeleteLead(lead.id)}
+                                  className="text-destructive font-body"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                          <div className="space-y-1">
+                            <a
+                              href={`mailto:${lead.email}`}
+                              className="flex min-w-0 items-center gap-2 break-all text-sm font-body text-muted-foreground"
+                            >
+                              <Mail className="w-3 h-3 shrink-0" />
+                              {lead.email}
+                            </a>
+                            <a
+                              href={`tel:${lead.phone}`}
+                              className="flex items-center gap-2 text-sm font-body text-muted-foreground"
+                            >
+                              <Phone className="w-3 h-3 shrink-0" />
+                              {lead.phone}
+                            </a>
+                          </div>
+                          <p className="break-words font-body text-sm">
+                            <span className="text-muted-foreground">Service: </span>
+                            {serviceShortLabel(lead.service_type)}
+                          </p>
+                          <p className="font-body text-sm text-muted-foreground">
+                            {new Date(lead.created_at).toLocaleDateString()}
+                          </p>
+                          <Select
+                            value={lead.status}
+                            onValueChange={(value) => handleStatusChange(lead.id, value)}
+                          >
+                            <SelectTrigger
+                              className={`h-8 w-full text-xs font-body ${getStatusColor(lead.status)}`}
+                              data-testid={`status-select-${lead.id}`}
+                            >
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {statuses.map((status) => (
+                                <SelectItem
+                                  key={status}
+                                  value={status}
+                                  className="font-body text-xs capitalize"
+                                >
+                                  {status}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </article>
+                      ))}
+                    </div>
+                    <div className="hidden overflow-x-auto md:block">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -570,6 +651,7 @@ const AdminDashboard = () => {
                         </TableBody>
                       </Table>
                     </div>
+                    </>
                   )}
                 </CardContent>
               </Card>
@@ -586,7 +668,7 @@ const AdminDashboard = () => {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Enable/Disable Toggle */}
-                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+                  <div className="flex flex-col gap-4 p-4 bg-muted/50 rounded-lg sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <Label className="font-body font-semibold text-foreground">
                         Enable Promo Banner
@@ -719,7 +801,7 @@ const AdminDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between gap-6 p-4 bg-muted/50 rounded-lg">
+                  <div className="flex flex-col gap-4 p-4 bg-muted/50 rounded-lg sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <Label htmlFor="snow-season-switch" className="font-body font-semibold text-foreground">
                         Snow Contract Season

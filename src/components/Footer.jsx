@@ -26,9 +26,10 @@ const Footer = ({ snowSeason = false }) => {
   const serviceAreas = [
     "Hamilton",
     "Burlington",
-    "Oakville",
-    "Mississauga",
-    "GTA",
+    "Stoney Creek",
+    "Ancaster",
+    "Dundas",
+    "Grimsby",
   ];
 
   return (
