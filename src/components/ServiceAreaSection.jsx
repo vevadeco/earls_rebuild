@@ -11,10 +11,6 @@ const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
     { name: "Ancaster", primary: false },
     { name: "Dundas", primary: false },
     { name: "Grimsby", primary: false },
-    { name: "Milton", primary: false },
-    { name: "Brampton", primary: false },
-    { name: "Toronto", primary: false },
-    { name: "Etobicoke", primary: false },
   ];
 
   return (
@@ -61,16 +57,6 @@ const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
                     </div>
                   </div>
 
-                  {/* Toronto Pin */}
-                  <div
-                    className="absolute left-[55%] top-[30%] transform -translate-x-1/2 -translate-y-1/2"
-                    data-testid="map-pin-toronto"
-                  >
-                    <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center shadow-lg">
-                      <MapPin className="w-5 h-5 text-accent-foreground" />
-                    </div>
-                  </div>
-
                   {/* Burlington Pin */}
                   <div
                     className="absolute left-[40%] top-[45%] transform -translate-x-1/2 -translate-y-1/2"
@@ -100,8 +86,8 @@ const ServiceAreaSection = ({ onGetQuote, snowSeason = false }) => {
                     <span className="text-xs font-body">Headquarters</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="w-3 h-3 bg-accent rounded-full" />
-                    <span className="text-xs font-body">GTA Coverage</span>
+                    <div className="w-3 h-3 bg-secondary rounded-full" />
+                    <span className="text-xs font-body">Nearby areas</span>
                   </div>
                 </div>
               </div>

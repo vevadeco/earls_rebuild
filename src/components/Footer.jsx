@@ -28,7 +28,6 @@ const Footer = ({ snowSeason = false }) => {
     "Burlington",
     "Oakville",
     "Mississauga",
-    "Toronto",
     "GTA",
   ];
 
