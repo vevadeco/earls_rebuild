@@ -42,7 +42,7 @@ export async function POST(req: Request) {
   const { name, email, phone, service_type, message, source } = parsed.data;
 
   await sql`
-    INSERT INTO leads (id, name, email, phone, service_type, message, status, source)
+    INSERT INTO leads (id, name, email, phone, service_type, message, status, source, priority)
     VALUES (
       ${id},
       ${name},
@@ -51,7 +51,8 @@ export async function POST(req: Request) {
       ${service_type},
       ${message ?? null},
       'new',
-      ${source ?? "website"}
+      ${source ?? "website"},
+      'medium'
     )
   `;
 

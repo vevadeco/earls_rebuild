@@ -17,26 +17,42 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const limit = Math.min(Number(url.searchParams.get("limit") || "100") || 100, 250);
   const offset = Math.max(Number(url.searchParams.get("offset") || "0") || 0, 0);
+  const statusFilter = url.searchParams.get("status") || "";
+  const priorityFilter = url.searchParams.get("priority") || "";
 
-  const { rows } = await sql<LeadRow>`
-    SELECT id, created_at, name, email, phone, service_type, message, status, source
-    FROM leads
-    ORDER BY created_at DESC
-    LIMIT ${limit} OFFSET ${offset}
-  `;
+  let query;
+  if (statusFilter && priorityFilter) {
+    query = await sql<LeadRow>`
+      SELECT id, created_at, name, email, phone, service_type, message, status, source, priority, contacted_at, closed_at
+      FROM leads
+      WHERE status = ${statusFilter} AND priority = ${priorityFilter}
+      ORDER BY created_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  } else if (statusFilter) {
+    query = await sql<LeadRow>`
+      SELECT id, created_at, name, email, phone, service_type, message, status, source, priority, contacted_at, closed_at
+      FROM leads
+      WHERE status = ${statusFilter}
+      ORDER BY created_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  } else if (priorityFilter) {
+    query = await sql<LeadRow>`
+      SELECT id, created_at, name, email, phone, service_type, message, status, source, priority, contacted_at, closed_at
+      FROM leads
+      WHERE priority = ${priorityFilter}
+      ORDER BY created_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  } else {
+    query = await sql<LeadRow>`
+      SELECT id, created_at, name, email, phone, service_type, message, status, source, priority, contacted_at, closed_at
+      FROM leads
+      ORDER BY created_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+  }
 
-  const out = rows.map((r) => ({
-    id: r.id,
-    created_at: r.created_at,
-    name: r.name,
-    email: r.email,
-    phone: r.phone,
-    service_type: r.service_type,
-    message: r.message,
-    status: r.status,
-    source: r.source
-  }));
-
-  return NextResponse.json(out);
+  return NextResponse.json(query.rows);
 }
-

@@ -16,7 +16,7 @@ export function middleware(req: NextRequest) {
   requestHeaders.set("x-pathname", pathname);
 
   // Admin auth guard
-  if (pathname.startsWith("/admin/leads")) {
+  if (pathname.startsWith("/admin/leads") || pathname.startsWith("/admin/invoices")) {
     const token = req.cookies.get("earls_admin")?.value;
     if (!token) {
       const url = req.nextUrl.clone();

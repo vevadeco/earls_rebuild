@@ -21,7 +21,7 @@ export async function GET() {
   await dbReady();
 
   const { rows } = await sql<LeadRow>`
-    SELECT id, created_at, name, email, phone, service_type, message, status, source
+    SELECT id, created_at, name, email, phone, service_type, message, status, source, priority, contacted_at, closed_at
     FROM leads
     ORDER BY created_at DESC
     LIMIT 5000
@@ -36,7 +36,10 @@ export async function GET() {
     "service_type",
     "message",
     "status",
-    "source"
+    "source",
+    "priority",
+    "contacted_at",
+    "closed_at"
   ];
   const lines = [header.join(",")].concat(
     rows.map((r) =>
@@ -49,7 +52,10 @@ export async function GET() {
         r.service_type,
         r.message,
         r.status,
-        r.source
+        r.source,
+        r.priority,
+        r.contacted_at,
+        r.closed_at
       ]
         .map(csvEscape)
         .join(",")
@@ -61,4 +67,3 @@ export async function GET() {
     filename: `leads_${new Date().toISOString().slice(0, 10)}.csv`
   });
 }
-
